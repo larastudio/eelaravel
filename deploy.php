@@ -33,23 +33,34 @@ task('horizon:terminate', function () {
     run("cd {{release_path}} && php artisan horizon:terminate");
 });
 
+desc('Reload the php-fpm service');
+task('fpm:reload', function () {
+    run('{{php_fpm_command}}');
+});
+
 // Hosts
 // dep deploy production
 // dep deploy staging
 
-   host('staging')
-   ->hostname('staging.larastud.io')
-   ->user('web')
-   ->forwardAgent()
-   ->stage('staging')
-   ->set('deploy_path', '/opt/easyengine/sites/staging.lara.studio');
+    host('staging')
+    ->hostname('staging.lara.studio')
+    ->set('deploy_path', '/path/to/deployer')
+    ->set('bin/php', 'cd /path/to/laradock/ && docker-compose exec -T workspace php')
+    ->set('bin/composer', 'cd /path/to/laradock/ && docker-compose exec -T workspace composer -d={{release_path}}')
+    ->user('web')
+    ->forwardAgent()
+    ->stage('staging')
+    ->set('deploy_path', '/opt/easyengine/sites/staging.lara.studio');
 
-   host('production')
-   ->hostname('larastud.io')
-   ->user('web')
-   ->forwardAgent()
-   ->stage('production')
-   ->set('deploy_path', '/opt/easyengine/sites/lara.studio');
+    host('production')
+    ->set('deploy_path', '/path/to/deployer')
+    ->set('bin/php', 'cd /path/to/laradock/ && docker-compose exec -T workspace php')
+    ->set('bin/composer', 'cd /path/to/laradock/ && docker-compose exec -T workspace composer -d={{release_path}}')
+    ->hostname('lara.studio')
+    ->user('web')
+    ->forwardAgent()
+    ->stage('production')
+    ->set('deploy_path', '/opt/easyengine/sites/lara.studio');
 
 
 // Run database migrations
